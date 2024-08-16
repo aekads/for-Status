@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screen Data</title>
+  <link rel="icon" type="image/png"
+    href="https://res.cloudinary.com/dqfnwh89v/image/upload/v1721653535/Aek_Ads_Fevicon_m0qmmj.png">
+  <!-- <link rel="stylesheet" href="/css/screen.css" /> -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <style>
+    body{
+      margin: 0px;
+      width: 100%;
+      height: 100vh;
+    
+      padding: 1%;
+      box-sizing: border-box;
+    }
+    .screens{
+      width: 98%;
+      padding: 1% 1%;
+    }
+    .screen-overview {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+ margin-top: 0px;
+  /* font-family: Gilroy; */
+  font-size: 18px;
+  font-weight: 500;
+
+  color: #202224;
+}
+.show-Screen {
+  box-shadow: 0px 4px 10px 0px #00000040;
+  background: #ffffff;
+  width: 98%;
+  border-radius: 14px;
+  margin: 1% 0 1% 0;
+  padding: 1%;
+  overflow: hidden; /* Hide overflow for the show-Screen div */
+}
+.screen-overview p {
+  font-size: 30px;
+  font-weight: 400;
+}
+.total-screen,
+.online-screen,
+.offline-screen {
+  width: 33%;
+  height: 100px;
+  border: 1px solid transparent;
+  box-shadow: 0px 4px 4px 0px #00000040;
+  background: #b1e3ff;
+  border-radius: 10px;
+  padding: 25px 28px;
+}
+.online-screen {
+  background: #9fdc9a;
+}
+.offline-screen {
+  background: #e99d9d;
+}
+.total-screen:hover,
+.online-screen:hover,
+.offline-screen:hover {
+  box-shadow: 0px 4px 7px 0px #00000080;
+}
+.tableClass {
+  max-height: 59vh; /* Adjust the height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /* border: 1px solid #979797; */
+}
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  font-weight: 400;
+  font-size: 15px;
+  border: none;
+}
+th {
+  background-color: #f2f2f2;
+  color: #363636;
+  font-weight: bold;
+}
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+  color: #202224;
+}
+.status-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+.offline {
+  background: #dc3545;
+  width: 66px;
+  height: 25px;
+  color: white;
+  border-radius: 30px;
+  font-size: 12px; align-items: center;
+  justify-content: center;
+}
+.online {
+  background: #20c997;
+  width: 66px;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 30px;
+  font-size: 12px;
+
+}
+  </style>
+</head>
+
+<body>
+  <% if (message) { %>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        Swal.fire({
+          icon: '<%= message.type === "error" ? "error" : "success" %>',
+          title: '<%= message.type === "error" ? "Error" : "Success" %>',
+          text: '<%= message.text %>',
+          customClass: {
+            title: '<%= message.type === "error" ? "error-title" : "success-title" %>',
+            content: '<%= message.type === "error" ? "error-content" : "success-content" %>'
+          }
+        });
+      });
+    </script>
+    <% } %>
+
+
+
+
+
+        <div class="screens">
+        
+        
+
+         <div class="screen-overview">
+            <div class="total-screen">
+              <h3>Total Screen</h3>
+              <p>
+                <%= screenCount %>
+              </p>
+            </div>
+            <div class="online-screen">
+              <h3>Online Screen</h3>
+              <p>
+                <%= onlineScreenCount %>
+              </p>
+            </div>
+            <div class="offline-screen">
+              <h3>Offline Screen</h3>
+              <p>
+                <%= offlineScreenCount %>
+              </p>
+            </div>
+          </div>
+       
+
+
+
+          <div class="show-Screen" id="show-Screen">
+            <div>
+              <h2>Screens/Players</h2>
+              <p style="font-size: small;">Total Screen : <%= screenCount %>
+              </p>
+            </div>
+            <div class="tableClass">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sr No.</th>
+                    <th>Screen Id</th>
+                   
+                    <th>Screen Name</th>
+                  
+                    <th>Status</th>
+
+                  
+                    <th>Address</th>
+                   
+                    <th>Last Response Time</th>
+                   
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (screens && screens.length) { %>
+                    <% screens.forEach((screen, index)=> { %>
+                      <tr data-pairingcode="<%= screen.pairingcode %>" class="<%= !screen.playlistname ? 'no-playlist' : '' %>">
+                        <td>
+                          <%= index + 1 %>
+                        </td>
+                        <td id="screen.screenid">
+                          <%= screen.screenid %>
+                        </td>
+                        
+                        <td id="screen.screenname">
+                          <%= screen.screenname.length> 20 ? screen.screenname.substring(0, 20) + '...' :
+                            screen.screenname %>
+                        </td>
+                       
+                        <td id="screen.deleted">
+                          <% screenStatus.forEach(screenStu=> { %>
+                            <% if (screen.screenid==screenStu.client_name) { %>
+                              <p class="status-cell <%= screenStu.status === 'offline' ? 'offline' : 'online' %> ">
+                                <%= screenStu.status %>
+                              </p>
+                              <% } %>
+                                <% }); %>
+                        </td>
+                        
+                        <td id="screen.location">
+                          <%= screen.location.length> 20 ? screen.location.substring(0, 20) + '...' : screen.location %>
+                        </td>
+                     
+                        <td id="screen.pincode">
+
+
+                          <% function timeSince(dateTime) { const seconds=Math.floor((Date.now() - new Date(dateTime)) /
+                            1000); let interval=Math.floor(seconds / 86400); if (interval>= 1) return interval + " day"
+                            + (interval > 1 ? "s" : "") + " ago";
+
+                            interval = Math.floor(seconds / 3600);
+                            if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+
+                            interval = Math.floor(seconds / 60);
+                            if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+
+                            return seconds + " second" + (seconds > 1 ? "s" : "") + " ago";
+                            }
+                            %>
+
+
+
+
+
+                            <% screenStatus.forEach(screenStu=> { %>
+                              <% if (screen.screenid==screenStu.client_name) { %>
+
+
+                                <%= timeSince(screenStu.updated_at) %>
+
+                                  <% } %>
+                                    <% }); %>
+                        </td>
+                       
+                      </tr>
+                      <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="10">No screens found</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+
+              </table>
+            </div>
+
+            <div id="noResultsMessage" style="display: none; text-align: center;">No screens found.</div>
+          </div>
+
+
+       
+        </div>
+
+        <script src="/javaScripts/screen.js"></script>
+</body>
+
+</html>
